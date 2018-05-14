@@ -1,4 +1,4 @@
-from random import choice,shuffle
+from random import choice, shuffle
 import csv
 from itertools import cycle
 
@@ -16,40 +16,54 @@ def handle_dialog(request, response, user_storage):
         shuffle(_a)
         inf_list = cycle(_a)
         user_storage['questions'] = inf_list
-        event = next(user_storage['questions'])
 
+        event = next(user_storage['questions'])
         year = events[event]
+        buttons = get_random_buttons(year)
+
         user_storage["event"] = event
         user_storage["answer"] = year
+        user_storage["buttons"] = buttons
 
         response.set_text('Я буду говорить события из русской истории, а ты напишешь мне их даты.\n'
-                          'Скажи, когда произошло: {}'.format(event))
+                          'Скажи, когда произошло: {}'.format(user_storage["event"]))
+        response.set_buttons(user_storage["buttons"])
 
         return response, user_storage
 
     else:
-
-        if "event" not in user_storage.keys():
-            event = choice(list(events.keys()))
-            year = events[event]
-            user_storage["event"] = event
-            user_storage["answer"] = year
-        else:
-            event = user_storage["event"]
-            year = user_storage["answer"]
-
         # Обрабатываем ответ пользователя.
-        if request.command.lower() == year:
+        if request.command.lower() == user_storage["answer"]:
             # Пользователь ввел правильный вариант ответа.
             event = next(user_storage['questions'])
             year = events[event]
+            buttons = get_random_buttons(year)
             user_storage["event"] = event
             user_storage["answer"] = year
+            user_storage["buttons"] = buttons
             response.set_text('Верно!\n'
-                              'Следующий вопрос: когда произошло событие: {}'.format(event))
+                              'Следующий вопрос: когда произошло событие: {}'.format(user_storage["event"]))
+            response.set_buttons(user_storage["buttons"])
 
             return response, user_storage
 
+        buttons = get_random_buttons(user_storage['answer'])
+
+        response.set_buttons(buttons)
         response.set_text("Неверно! Попробуй еще раз.")
 
         return response, user_storage
+
+
+def get_random_buttons(date):
+    dates = list(range(800, 2000))
+    dates.pop(dates.index(int(date)))
+    shuffle(dates)
+
+    dates = dates[:3]
+    dates.append(date)
+    shuffle(dates)
+    buttons = [{'title': str(date), 'hide': True} for date in dates]
+
+    return buttons
+
