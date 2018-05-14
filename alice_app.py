@@ -9,7 +9,7 @@ import logging
 from alice_sdk import AliceRequest, AliceResponse
 
 # Импортируем модуль с логикой игры
-import history
+from history import handle_dialog
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
