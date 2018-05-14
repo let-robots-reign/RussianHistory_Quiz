@@ -1,5 +1,6 @@
-from random import choice
+from random import choice,shuffle
 import csv
+from itertools import cycle
 
 
 with open("russian-history-events.csv", "r", encoding="utf8") as csvfile:
@@ -11,8 +12,11 @@ with open("russian-history-events.csv", "r", encoding="utf8") as csvfile:
 def handle_dialog(request, response, user_storage):
     if request.is_new_session:
         user_storage = {}
-        print(events)
-        event = choice(list(events.keys()))
+        _a = list(events.keys())
+        shuffle(_a)
+        inf_list = cycle(_a)
+        user_storage['questions'] = inf_list
+        event = next(user_storage['questions'])
 
         year = events[event]
         user_storage["event"] = event
@@ -37,7 +41,7 @@ def handle_dialog(request, response, user_storage):
         # Обрабатываем ответ пользователя.
         if request.command.lower() == year:
             # Пользователь ввел правильный вариант ответа.
-            event = choice(list(events.keys()))
+            event = next(user_storage['questions'])
             year = events[event]
             user_storage["event"] = event
             user_storage["answer"] = year
