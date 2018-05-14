@@ -1,6 +1,5 @@
-
-
-from __future__ import unicode_literals
+from random import choice
+import csv
 
 
 # Функция для непосредственной обработки диалога.
