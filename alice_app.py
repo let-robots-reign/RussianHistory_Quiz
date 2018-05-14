@@ -27,7 +27,6 @@ session_storage = {}
 def main():
     # Функция получает тело запроса и возвращает ответ.
     alice_request = AliceRequest(request.json)
-    print(alice_request)
     logging.info('Request: {}'.format(alice_request))
 
     alice_response = AliceResponse(alice_request)
