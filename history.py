@@ -24,8 +24,8 @@ def handle_dialog(request, response, user_storage):
         user_storage["event"] = event
         user_storage["answer"] = year
         user_storage["buttons"] = buttons
-
         response.set_text('Я буду говорить события из русской истории, а ты напишешь мне их даты.\n'
+                          'Для завершения игры скажите "конец игры".\n'
                           'Скажи, когда произошло: {}'.format(user_storage["event"]))
         response.set_buttons(user_storage["buttons"])
 
@@ -33,7 +33,14 @@ def handle_dialog(request, response, user_storage):
 
     else:
         # Обрабатываем ответ пользователя.
-        if request.command.lower() == user_storage["answer"]:
+        if request.command.lower() == "конец игры":
+            response.set_text("Спасибо за игру! До встречи!")
+            response.set_end_session(True)
+            user_storage = {}
+
+            return response, user_storage
+
+        elif request.command.lower() == user_storage["answer"]:
             # Пользователь ввел правильный вариант ответа.
             event = next(user_storage['questions'])
             year = events[event]
