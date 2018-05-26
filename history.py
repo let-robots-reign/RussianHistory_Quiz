@@ -1,5 +1,5 @@
-from random import choice, shuffle
 import csv
+from random import shuffle
 from itertools import cycle
 
 
@@ -15,7 +15,6 @@ def handle_dialog(request, response, user_storage):
         response.set_text('Выберите сложность')
         response.set_buttons([{'title': 'easy', 'hide': True}, {'title': 'medium', 'hide': True},
                              {'title': 'hard', 'hide': True}])
-        user_storage["difficulty"] = request.command.lower()
 
         return response, user_storage
 
@@ -61,7 +60,7 @@ def handle_dialog(request, response, user_storage):
             user_storage["buttons"] = buttons
             user_storage["right_answers"] += 1
             response.set_text('Верно!\n'
-                              'Следующий вопрос: когда произошло событие: {}'.format(user_storage["event"]))
+                              'Следующий вопрос. Когда произошло событие: {}'.format(user_storage["event"]))
             response.set_buttons(user_storage["buttons"])
 
             return response, user_storage
@@ -85,4 +84,3 @@ def get_random_buttons(date):
     buttons = [{'title': str(date), 'hide': True} for date in dates]
 
     return buttons
-
